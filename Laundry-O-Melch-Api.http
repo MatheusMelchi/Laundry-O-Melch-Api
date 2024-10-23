@@ -1,0 +1,6 @@
+@Laundry_O_Melch_Api_HostAddress = http://localhost:5088
+
+GET {{Laundry_O_Melch_Api_HostAddress}}/Clientes/
+Accept: application/json
+
+###
