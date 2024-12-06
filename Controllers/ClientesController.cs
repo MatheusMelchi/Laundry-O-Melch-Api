@@ -1,5 +1,7 @@
-﻿using Laundry_O_Melch_Api.Entities;
+﻿using Laundry_O_Melch_Api.DTOs;
+using Laundry_O_Melch_Api.Entities;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace Laundry_O_Melch_Api.Controllers
 {
@@ -26,7 +28,7 @@ namespace Laundry_O_Melch_Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post(Cliente cliente)
+        public IActionResult Post([FromBody] Cliente cliente)
         {
             if(cliente == null) 
                 return BadRequest();
@@ -35,6 +37,21 @@ namespace Laundry_O_Melch_Api.Controllers
             _context.SaveChanges();
 
             return CreatedAtAction(nameof(GetCliente), new { id = cliente.Id }, cliente);
+        }
+
+        [HttpPost("Lista")]
+        public IActionResult ClientesLista([FromBody] ClienteFiltro filtros)
+        {
+            var lista = from cliente in _context.Cliente
+                        where cliente.Nome.Contains(filtros.Nome)
+                        || cliente.Email.Contains(filtros.Email)
+                        || cliente.Cpf.Contains(filtros.Cpf)
+                        || cliente.Celular.Contains(filtros.Celular)
+                        || cliente.Cnpj.Contains(filtros.Cnpj)
+                        || (filtros.Todos ?? false) ? true : false
+                        select cliente;
+
+            return Ok(lista);
         }
     }
 }
